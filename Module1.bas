@@ -121,6 +121,9 @@ Function openAndParse(path As String)
 
     End With
     
+    objWord.Quit
+    Set objWord = Nothing
+    
 End Function
 
 Function setRowNumber(rn As Integer)
