@@ -1,5 +1,6 @@
 Attribute VB_Name = "Module1"
 Private rowNumber As Integer
+Private docFolder As String
 
 Sub GeneratePDF()
     UserForm1.Show
@@ -18,16 +19,24 @@ Function documentPath() As String
         Dim cellTextH As String
         cellTextH = .Range("H" + CStr(rowNumber)).Text
         
-        If InStr(cellTextG, "waived") > 0 And InStr(cellTextH, "Fall") > 0 And InStr(cellTextH, "Academic") = 0 Then
+        If InStr(cellTextG, "waived") > 0 And InStr(cellTextH, "Spring") > 0 And InStr(cellTextH, "Academic") = 0 Then
+            docFolder = "IEPUN"
             documentPath = getCurrentDir + "\semwaived.docx"
         End If
-        If InStr(cellTextG, "waived") > 0 And InStr(cellTextH, "Academic") > 0 Then
+        If InStr(cellTextG, "waived") > 0 And InStr(cellTextH, "Fall 2015 & Spring 2016") > 0 Then
+            docFolder = "IEPUN"
             documentPath = getCurrentDir + "\aywaived.docx"
         End If
-        If InStr(cellTextG, "paying") > 0 And InStr(cellTextH, "Fall") > 0 And InStr(cellTextH, "Academic") = 0 Then
+        If InStr(cellTextG, "paying") > 0 And InStr(cellTextH, "Spring") > 0 And InStr(cellTextH, "Academic") = 0 Then
+            docFolder = "VISN"
             documentPath = getCurrentDir + "\semesterfee.docx"
         End If
-        If InStr(cellTextG, "paying") > 0 And InStr(cellTextH, "Academic") > 0 Then
+        If InStr(cellTextG, "paying") > 0 And InStr(cellTextH, "Fall 2015 & Spring 2016") > 0 Then
+            docFolder = "VISN"
+            documentPath = getCurrentDir + "\ayfee.docx"
+        End If
+        If InStr(cellTextG, "paying") > 0 And InStr(cellTextH, "Spring 2016 & Fall 2016") > 0 Then
+            docFolder = "VISN"
             documentPath = getCurrentDir + "\ayfee.docx"
         End If
         
@@ -74,7 +83,7 @@ Function openAndParse(path As String)
         lNamePath = StrConv(.Range("C" + CStr(rowNumber)).Text, vbLowerCase)
         
         Dim BString() As String
-        BString = Split(.Range("B" + CStr(rowNumber)), "- ")
+        BString = Split(.Range("B" + CStr(rowNumber)), "-")
         
         'Parse university name
         objSelection.Find.Text = "Universityname"
@@ -115,14 +124,15 @@ Function openAndParse(path As String)
         objSelection.Find.Execute , , , , , , , , , , wdReplaceAll
         
         'Saves document as PDF and closes template without saving
-        objDoc.SaveAs2 getCurrentDir + "\AcceptanceLetters\" + lNamePath + fNamePath + ".pdf", 17
+        objDoc.SaveAs2 getCurrentDir + "\AcceptanceLetters\" + docFolder + "\" + lNamePath + fNamePath + ".pdf", 17
         objDoc.Close savechanges:=False
+        
+        objWord.Quit
+        Set objDoc = Nothing
+        Set objWord = Nothing
     End If
 
     End With
-    
-    objWord.Quit
-    Set objWord = Nothing
     
 End Function
 
